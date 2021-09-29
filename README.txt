@@ -1,3 +1,8 @@
+For more information on the People API:
+https://developers.google.com/people
+
+---
+
 Required files/directories:
 
 creds/
