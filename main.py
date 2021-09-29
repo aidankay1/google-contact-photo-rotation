@@ -22,13 +22,14 @@ def main():
     resource_name_file = "vars/resource_name"
     images_dir = "images/"
 
-    service = authenticate(SCOPES, "creds")
-
     # resourceName can be acquired from the contact's URL on contacts.google.com
     with open(resource_name_file, "r") as f:
         resource_name = f.read().strip("\n")
 
+    # Image data must be sent in base64-encoded byte format
     image_bytes = select_image(images_dir)
+
+    service = authenticate(SCOPES, "creds")
 
     try:
         service.people().updateContactPhoto(
@@ -67,10 +68,10 @@ def authenticate(scopes, creds_dir):
 def select_image(dir):
     # https://gist.github.com/lambdaman2/3811448
     random_image = random.choice(os.listdir(dir))
-
-    # https://www.codespeedy.com/convert-image-to-base64-string-in-python/
-    # Must be encoded in UTF-8 to be sent in JSON format
-    with open(f"images/{random_image}", "rb") as image:
+    
+    with open(f"{dir}/{random_image}", "rb") as image:
+        # https://www.codespeedy.com/convert-image-to-base64-string-in-python/
+        # Must be encoded in UTF-8 to be sent in JSON format
         image_bytes = base64.b64encode(image.read()).decode("utf-8")
 
     return image_bytes
