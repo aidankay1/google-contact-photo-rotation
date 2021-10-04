@@ -51,7 +51,14 @@ def authenticate(scopes, creds_dir):
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            try:
+                # Will raise an exception if refresh token is expired
+                creds.refresh(Request())
+            except:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    f"{creds_dir}/credentials.json", scopes
+                )
+                creds = flow.run_local_server(port=0)
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 f"{creds_dir}/credentials.json", scopes
